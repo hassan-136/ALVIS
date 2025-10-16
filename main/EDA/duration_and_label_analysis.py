@@ -1,9 +1,9 @@
-
 import os
 import pandas as pd
 import librosa
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import numpy as np
 
 # --- STEP 1: Set Dataset Path ---
 dataset_path = r"D:\HD-Track2"
@@ -54,34 +54,105 @@ label_counts = df["label"].value_counts()
 print("\n🏷️ Label Distribution:")
 print(label_counts)
 
-# --- STEP 7: Plot Charts and Save as PDF ---
+# --- STEP 7: Plot Charts with Better Label Spacing ---
 os.makedirs("plots", exist_ok=True)
 
-# --- Bar Chart ---
-plt.figure(figsize=(8,5))
-label_counts.plot(kind='bar', color='skyblue', edgecolor='black')
-plt.title("Label Distribution (Bar Chart)")
-plt.xlabel("Emotion Labels")
-plt.ylabel("Number of Audio Files")
-plt.grid(axis='y', linestyle='--', alpha=0.6)
+# --- Improved Bar Chart ---
+plt.figure(figsize=(max(10, len(label_counts) * 0.8), 6))  # Dynamic width based on number of labels
+bars = plt.bar(range(len(label_counts)), label_counts.values, 
+               color='lightsteelblue', edgecolor='navy', alpha=0.8, linewidth=0.5)
+
+plt.title("Label Distribution (Bar Chart)", fontsize=14, pad=20)
+plt.xlabel("Emotion Labels", fontsize=12)
+plt.ylabel("Number of Audio Files", fontsize=12)
+plt.grid(axis='y', linestyle='--', alpha=0.4)
+
+# Improved x-axis labels with rotation and better spacing
+plt.xticks(range(len(label_counts)), label_counts.index, 
+           rotation=45, ha='right', rotation_mode='anchor', fontsize=10)
+
+# Add value labels on top of bars
+for i, bar in enumerate(bars):
+    height = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2., height + max(label_counts.values)*0.01,
+             f'{int(height)}', ha='center', va='bottom', fontsize=9, fontweight='bold')
+
+# Adjust y-axis limit to accommodate value labels
+plt.ylim(0, max(label_counts.values) * 1.1)
+
 plt.tight_layout()
-plt.savefig("plots/label_distribution_bar.pdf", format="pdf")
+plt.savefig("plots/label_distribution_bar.pdf", format="pdf", bbox_inches='tight', dpi=300)
 plt.show()
 
-# --- Pie Chart (cleaner labels & colors) ---
-plt.figure(figsize=(7,7))
-colors = plt.cm.tab20.colors  # better contrast
-plt.pie(
-    label_counts,
-    labels=[f"{label} ({count})" for label, count in zip(label_counts.index, label_counts.values)],
-    autopct='%1.1f%%',
+# --- Improved Pie Chart ---
+plt.figure(figsize=(12, 9))
+colors = plt.cm.Set3(np.linspace(0, 1, len(label_counts)))
+
+# Create pie chart with better label positioning
+wedges, texts, autotexts = plt.pie(
+    label_counts.values,
+    labels=None,  # We'll add custom labels later
+    autopct='',   # We'll add custom percentage text
     startangle=90,
-    colors=colors[:len(label_counts)],
+    colors=colors,
+    wedgeprops={'edgecolor': 'w', 'linewidth': 1, 'alpha': 0.9},
     textprops={'fontsize': 10}
 )
-plt.title("Label Distribution (Pie Chart)")
+
+# Custom legend with better formatting
+legend_labels = [f'{label} ({count}, {count/sum(label_counts.values)*100:.1f}%)' 
+                 for label, count in zip(label_counts.index, label_counts.values)]
+plt.legend(wedges, legend_labels, 
+           title="Emotion Labels",
+           loc="center left",
+           bbox_to_anchor=(1, 0, 0.5, 1),
+           fontsize=10,
+           frameon=True,
+           fancybox=True,
+           shadow=True)
+
+plt.title("Label Distribution (Pie Chart)", fontsize=14, pad=20)
+
 plt.tight_layout()
-plt.savefig("plots/label_distribution_pie.pdf", format="pdf")
+plt.savefig("plots/label_distribution_pie.pdf", format="pdf", bbox_inches='tight', dpi=300)
+plt.show()
+
+# Alternative Pie Chart with direct labels (if you prefer this style)
+plt.figure(figsize=(12, 8))
+colors = plt.cm.tab20.colors
+
+# For pie chart with direct labels (better for fewer categories)
+if len(label_counts) <= 8:
+    wedges, texts, autotexts = plt.pie(
+        label_counts.values,
+        labels=[f'{label}\n({count})' for label, count in zip(label_counts.index, label_counts.values)],
+        autopct='%1.1f%%',
+        startangle=90,
+        colors=colors[:len(label_counts)],
+        textprops={'fontsize': 9, 'ha': 'center'},
+        labeldistance=1.1,
+        pctdistance=0.85
+    )
+    
+    # Improve percentage text appearance
+    for autotext in autotexts:
+        autotext.set_color('white')
+        autotext.set_fontweight('bold')
+        autotext.set_fontsize(8)
+else:
+    # For many categories, use the legend approach
+    wedges, texts, autotexts = plt.pie(
+        label_counts.values,
+        labels=None,
+        autopct='%1.1f%%',
+        startangle=90,
+        colors=colors[:len(label_counts)],
+        textprops={'fontsize': 8}
+    )
+
+plt.title("Label Distribution (Pie Chart - Direct Labels)", fontsize=14, pad=20)
+plt.tight_layout()
+plt.savefig("plots/label_distribution_pie_direct.pdf", format="pdf", bbox_inches='tight', dpi=300)
 plt.show()
 
 # --- STEP 8: Save summaries ---
@@ -101,3 +172,11 @@ print(" - dataset_summary.csv (overview)")
 print(" - file_labels.csv (each file + label)")
 print(" - plots/label_distribution_bar.pdf")
 print(" - plots/label_distribution_pie.pdf")
+print(" - plots/label_distribution_pie_direct.pdf (alternative)")
+
+# Additional: Print some statistics
+print(f"\n📊 Dataset Statistics:")
+print(f"   - Number of unique labels: {len(label_counts)}")
+print(f"   - Most common label: {label_counts.index[0]} ({label_counts.values[0]} files)")
+print(f"   - Least common label: {label_counts.index[-1]} ({label_counts.values[-1]} files)")
+print(f"   - Average files per label: {len(audio_files)/len(label_counts):.1f}")
