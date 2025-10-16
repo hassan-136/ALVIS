@@ -10,7 +10,7 @@ output_dir = "plots/Duration and Waveform Analysis/"
 os.makedirs(output_dir, exist_ok=True)
 
 # Load durations CSV to pick sample clips
-durations_csv = os.path.join(output_dir, "durations.csv")
+durations_csv = os.path.join("main/EDA/csv/", "durations.csv")
 df = pd.read_csv(durations_csv)
 
 # Plot sample waveforms

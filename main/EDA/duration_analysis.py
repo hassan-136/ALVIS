@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 base_path = "data/HD-Track2/HD-Track2-dev/HD-Track2-dev-en"
 output_dir = "plots/Duration and Waveform Analysis/"
 os.makedirs(output_dir, exist_ok=True)
+csv_dir = "main/EDA/csv/"
+os.makedirs(csv_dir, exist_ok=True)
 
 # Measure durations
 records = []
@@ -29,7 +31,7 @@ for scenario in os.listdir(base_path):
 
 # Save durations CSV
 df = pd.DataFrame(records)
-durations_csv = os.path.join(output_dir, "durations.csv")
+durations_csv = os.path.join(csv_dir, "durations.csv")
 df.to_csv(durations_csv, index=False)
 print(f"Durations saved to {durations_csv}")
 
