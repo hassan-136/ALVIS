@@ -6,7 +6,7 @@ import pandas as pd
 dataset_path = r"D:\HD-Track2"   # adjust if needed
 
 print("Checking if path exists:", os.path.exists(dataset_path))
-print("Scanning dataset folder...")
+print("🔍 Scanning dataset folder...")
 
 # --- STEP 2: Initialize Lists ---
 audio_files = []
@@ -36,7 +36,7 @@ total_files = len(audio_files)
 total_speakers = len(set(speaker_folders))
 total_sessions = len(dialogue_sessions)
 
-print("\n Dataset Overview")
+print("\n📊 Dataset Overview")
 print(f"Total audio files: {total_files}")
 print(f"Total speakers (approx): {total_speakers}")
 print(f"Total dialogue sessions (approx): {total_sessions}")
@@ -49,6 +49,13 @@ summary_data = {
 }
 
 df_summary = pd.DataFrame(summary_data)
-df_summary.to_csv("dataset_overview.csv", index=False)
 
-print("\nDataset overview saved as 'dataset_overview.csv'")
+# ✅ Save in main/EDA/csv/ relative to this script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+save_dir = os.path.join(script_dir, "csv")
+os.makedirs(save_dir, exist_ok=True)
+
+save_path = os.path.join(save_dir, "dataset_overview.csv")
+df_summary.to_csv(save_path, index=False)
+
+print(f"\n✅ Dataset overview saved at: {save_path}")

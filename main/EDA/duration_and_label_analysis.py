@@ -81,7 +81,7 @@ for i, bar in enumerate(bars):
 plt.ylim(0, max(label_counts.values) * 1.1)
 
 plt.tight_layout()
-plt.savefig("plots/label_distribution_bar.pdf", format="pdf", bbox_inches='tight', dpi=300)
+plt.savefig("plots/Label Distribution/label_distribution_bar.pdf", format="pdf", bbox_inches='tight', dpi=300)
 plt.show()
 
 # --- Improved Pie Chart ---
@@ -114,7 +114,7 @@ plt.legend(wedges, legend_labels,
 plt.title("Label Distribution (Pie Chart)", fontsize=14, pad=20)
 
 plt.tight_layout()
-plt.savefig("plots/label_distribution_pie.pdf", format="pdf", bbox_inches='tight', dpi=300)
+plt.savefig("plots/Label Distribution/label_distribution_pie.pdf", format="pdf", bbox_inches='tight', dpi=300)
 plt.show()
 
 # Alternative Pie Chart with direct labels (if you prefer this style)
@@ -152,7 +152,7 @@ else:
 
 plt.title("Label Distribution (Pie Chart - Direct Labels)", fontsize=14, pad=20)
 plt.tight_layout()
-plt.savefig("plots/label_distribution_pie_direct.pdf", format="pdf", bbox_inches='tight', dpi=300)
+plt.savefig("plots/Label Distribution/label_distribution_pie_direct.pdf", format="pdf", bbox_inches='tight', dpi=300)
 plt.show()
 
 # --- STEP 8: Save summaries ---
@@ -164,8 +164,8 @@ summary = {
 }
 
 df_summary = pd.DataFrame(summary)
-df_summary.to_csv("dataset_summary.csv", index=False)
-df.to_csv("file_labels.csv", index=False)
+df_summary.to_csv("main/EDA/csv/dataset_summary.csv", index=False)
+df.to_csv("main/EDA/csv/file_labels.csv", index=False)
 
 print("\n✅ Summary saved:")
 print(" - dataset_summary.csv (overview)")
